@@ -21,28 +21,13 @@ ostream& operator<<(ostream& os, const vector<T>& v)
 
 class Solution {
 public:
-	//DP way
-    int jump(int A[], int n) {
-		std::vector<int> dp(n, 0);
-        for (int i = n-2; i >= 0; i--) {
- 			int t = A[i] + i >= n ? n - i - 1: A[i];
-			dp[i] = 1 + dp[i+t];
-			for (int j = t; j >= 1 && i+j < n; j--) {
-				if (dp[i] == 1) break;
- 				if (dp[i] > 1+dp[i+j]) dp[i] = 1 + dp[i+j];
-			}
-        }
-        return dp[0];
-    }
-}; 
-
-class Solution2 {
-public:
 	//greedy way
-    int jump(int A[], int n) {
-    	if (n == 1) return 0;
+    bool canJump(int A[], int n) {
+    	if (n == 1) return true;
     	int sp = 0;
         for (int i = 0; i < n;) {
+        	if (A[i] == 0) return false;
+
         	int t = A[i], id = i+1, m = t;
     		if (t + i >= n-1) return ++sp;
 
@@ -60,26 +45,31 @@ public:
 }; 
 
 void test(int A[], int n) {
-	cout << Solution2().jump(A, n) << endl;
+	cout << Solution().canJump(A, n) << endl;
 }
 
 int main(int argc, char const *argv[])
 {
+	{
+		int A[] = {3, 2, 1, 0, 4};
+		test(A, sizeof A / sizeof(A[0]));  // false
+	}
+
 	{
 		int A[] = {1, 2, 3, 4, 5, 6};
 		test(A, sizeof A / sizeof(A[0]));  // 3
 	}
 	{
 		int A[] = {2};
-		test(A, sizeof A / sizeof(A[0]));  // 0
+		test(A, sizeof A / sizeof(A[0]));  // true
 	}
 	{
 		int A[] = {2, 1};
 		test(A, sizeof A / sizeof(A[0]));  // 1
 	}
 	{
-		int A[] = {2, 3, 1, 1, 4};
-		test(A, sizeof A / sizeof(A[0]));  // 2
+		int A[] = {2, 3, 1, 1, 0, 4};
+		test(A, sizeof A / sizeof(A[0]));  // false
 	}
 	{
 		int n = 25000;
