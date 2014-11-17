@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <queue>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -37,6 +38,67 @@ ostream& operator<<(ostream& os, const vector<T>& vs)
     }
     return os <<"]";
 }
+
+class SegmentTree {
+public:
+    std::vector<int> nodes;
+    int n;
+
+    SegmentTree(const vector<int>& v) {
+        n = v.size();
+        int h = std::ceil(std::log2(n)); 
+        nodes = std::vector<int>(2*std::pow(2,h)-1, 0);
+
+        build(v, 0, 0, n-1);        
+    }
+
+    int query(const vector<int>& v, int ql, int qr) const {
+        return queryMin(v, 0, 0, n-1, ql, qr);
+    }
+
+private:
+    int idOfMin(const vector<int>& v, int id1, int id2) const {
+        if (id1 == INT_MAX) return id2;
+        else if (id2 == INT_MAX) return id1;
+
+        return (v[id1] < v[id2]) ? id1 : id2;
+    }
+
+    // [l, r] is region of id, [ql, qr] is query region
+    int queryMin(const vector<int>& v, int id, int l, int r, int ql, int qr) const {
+        if (ql <= l && qr >= r) return nodes[id];
+        if (ql > r || qr < l) return INT_MAX;
+
+        int mid = l + (r - l) / 2;
+        return idOfMin(v, queryMin(v, id*2+1, l, mid, ql, qr), queryMin(v, id*2+2, mid+1, r, ql, qr));
+    }
+
+    int build(const vector<int>& v, int id, int l, int r) {
+        if (l == r) {
+            return nodes[id] = l;
+        }
+
+        int mid = l + (r-l)/2;
+        return nodes[id] = idOfMin(v, build(v, id*2+1, l, mid), build(v, id*2+2, mid+1, r));
+    }
+
+};
+
+class Solution3 {
+public:
+    int largestRectangleArea(vector<int> &height) {
+        if (height.size() == 0) return 0;
+        SegmentTree st(height);
+        return dac(height, st, 0, height.size()-1);
+    }
+
+    int dac(const vector<int>& height, const SegmentTree& st, int l, int r) {
+        if (l > r) return -1;
+        if (l == r) return height[l];
+        int id = st.query(height, l, r);
+        return max(max(dac(height, st, l, id-1), dac(height, st, id+1, r)), (r-l+1)*height[id]);
+    }
+};
 
 // basically the same idea as Solution, but more elegant
 class Solution2 {
@@ -96,11 +158,30 @@ public:
 };
 
 void test(vector<int> &height) {
-    cout << Solution2().largestRectangleArea(height) << endl;
+    cout << Solution3().largestRectangleArea(height) << " ";        
+    cout << Solution().largestRectangleArea(height) << " ";
+    cout << Solution2().largestRectangleArea(height) << " ";
+    cout << endl;
 }
 
 int main(int argc, char const *argv[])
 {
+    {
+        std::vector<int> v {3,2,5,0,6,2,3};        
+        std::vector<int> v2 {2,1,5,6,2,3};
+
+        SegmentTree st(v);
+        cout << st.nodes << endl;
+        cout << "query " << st.query(v, 0, v.size()-1) << endl;
+        cout << "query " << st.query(v, 2, 6) << endl;        
+
+        SegmentTree st2(v2);        
+        cout << st2.nodes << endl;
+        cout << "query " << st2.query(v2, 0, v2.size()-1) << endl;
+        cout << "query " << st2.query(v2, 2, 5) << endl;
+        // return 0;
+    }
+
     {
         vector<int> v;        
         for (int i = 0; i < 9000; i++)
