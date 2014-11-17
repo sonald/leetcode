@@ -9,26 +9,30 @@ using namespace std;
 
 class Solution3 {
     public:
-        double median(int A[], int m, int B[], int n, int k) {    
-            if (m > n) return median(B, n, A, m, k);
-            int ka = min((k+1)/2, m), kb = k - ka;
+        double median(int A[], int m, int B[], int n, int k) {
+            // cout << "m " << m << ", n " << n << ", k " << k << endl;
+            if (m == 0) return B[k];
+            else if (n == 0) return A[k];
+            if (k == 0) return min(A[0], B[0]);
 
-            if (m == 0) return B[k-1];
-            if (k == 1) return min(A[0], B[0]);
+            int ka = min((k)/2, m-1), kb = k - ka - 1;
+            // cout << "ka " << ka << ", kb " << kb << endl;
+            if (kb < 0) return A[ka];
+            else if (kb > n-1) { kb = n-1; ka = k - kb - 1; }
 
-            int va = A[ka-1], vb = B[kb-1];
-            if (A[ka-1] >= B[kb-1]) return median(A, m, B+kb, n-kb, k-kb);
-            else return median(A+ka, m-ka, B, n, k-ka);
+            int va = A[ka], vb = B[kb];
+            if (A[ka] >= B[kb]) return median(A, m, B+kb+1, n-kb-1, k-kb-1);
+            else return median(A+ka+1, m-ka-1, B, n, k-ka-1);
         }
 
         double findMedianSortedArrays(int A[], int m, int B[], int n) {
-            auto mid = (m+n)/2;
+            auto mid = (m+n-1)/2;
             bool even = (m+n)%2 == 0;
 
             if (even) 
                 return (median(A, m, B, n, mid) + median(A, m, B, n, mid+1))/2.0;
             else 
-                return median(A, m, B, n, mid+1);
+                return median(A, m, B, n, mid);
         }
 };
 
@@ -49,10 +53,7 @@ class Solution2 {
 
         double single(int* arr, int len, bool even, int mid) {
             double res = arr[mid];
-            if (even) {
-                res += arr[mid+1];
-                res /= 2.0;
-            }
+            if (even) res = (res + arr[mid+1]) / 2.0; 
             return res;
         }
 
@@ -66,21 +67,6 @@ class Solution2 {
             if (A[0] > B[0]) { pa = B, pb = A; std::swap(m, n); }
 
             double res = 0.0; 
-
-            // no intersection
-            if (*(pa+m-1) <= *pb) {
-                if (mid >= m) {
-                    mid -= m; 
-                    res = single(pb, n, even, mid);
-                } else {
-                    res = pa[mid];
-                    if (even) {
-                        res += (mid == m-1) ? pb[0]: pa[mid+1];
-                        res /= 2.0;
-                    }
-                }          
-                return res;
-            }
 
             // treat pa as buckets, and pb are values split into buckets
             // first find which bucket mid reside in, then locate it in the bucket
@@ -105,6 +91,7 @@ class Solution2 {
                 } else l = k+1;
             }
 
+            if (gid >= mid) k--;
             mid -= k+1;
             res = pb[mid];
             if (even) {
@@ -117,6 +104,7 @@ class Solution2 {
         }
 };
 
+//O(m+n)
 class Solution {
     public:
         double findMedianSortedArrays(int A[], int m, int B[], int n) {
@@ -146,7 +134,9 @@ class Solution {
 void test(int A[], int m, int B[], int n) 
 {
     cout << Solution().findMedianSortedArrays(A, m, B, n) << endl;
+    cout << Solution2().findMedianSortedArrays(A, m, B, n) << endl;
     cout << Solution3().findMedianSortedArrays(A, m, B, n) << endl;
+    cout << "--------------\n";
 }
 
 #define LEN(a) (sizeof (a) /sizeof(a[0]))
