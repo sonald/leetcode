@@ -10,13 +10,11 @@ using namespace std;
 class Solution3 {
     public:
         double median(int A[], int m, int B[], int n, int k) {
-            // cout << "m " << m << ", n " << n << ", k " << k << endl;
             if (m == 0) return B[k];
             else if (n == 0) return A[k];
             if (k == 0) return min(A[0], B[0]);
 
             int ka = min((k)/2, m-1), kb = k - ka - 1;
-            // cout << "ka " << ka << ", kb " << kb << endl;
             if (kb < 0) return A[ka];
             else if (kb > n-1) { kb = n-1; ka = k - kb - 1; }
 
