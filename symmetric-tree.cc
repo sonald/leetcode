@@ -1,0 +1,134 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <random>
+#include <set>
+#include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+template<class T, class S>
+ostream& operator<<(ostream& os, const unordered_map<T, S>& v)
+{
+	bool f = true;
+	os << "{";
+    for (auto& t: v) {
+    	if (f) os << "(" << t.first << "," << t.second << ")";
+    	else os << "," << "(" << t.first << "," << t.second << ")";
+    }
+    return os << "}";
+}
+
+template <class T>
+ostream& operator<<(ostream& os, const vector<T>& vs)
+{
+	os << "[";
+    for (auto& s: vs) {
+        os << s << " ";
+    }
+    return os <<"]";
+}
+
+/**
+ * Definition for binary tree
+ */
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x, TreeNode* l = NULL, TreeNode* r = NULL) : val(x), left(l), right(r) {}
+};
+
+class Solution {
+public:
+    bool isSymmetric(TreeNode *root) {
+        if (!root) return true;
+        std::vector<TreeNode*> lsp, rsp;
+        if (root->left && root->right) {
+            lsp.push_back(root->left);
+            rsp.push_back(root->right);
+        } else if (root->left || root->right) {
+            return false;
+        }
+
+        while (lsp.size()) {
+            auto* lp = lsp.back(); lsp.pop_back();
+            auto* rp = rsp.back(); rsp.pop_back();
+            if (lp->val != rp->val) return false;
+
+            if (lp->left && rp->right) {
+                lsp.push_back(lp->left);
+                rsp.push_back(rp->right);
+            } else if (lp->left || rp->right) {
+                return false;
+            }
+
+            if (lp->right && rp->left) {
+                lsp.push_back(lp->right);
+                rsp.push_back(rp->left);
+            } else if (lp->right || rp->left) {
+                return false;
+            }
+        }
+
+        return lsp.size() == 0;
+    }
+};
+
+void test(TreeNode *p) {
+	cout << Solution().isSymmetric(p) << endl;
+}
+
+int main(int argc, char const *argv[])
+{
+    {
+        test(NULL); // 1
+    }
+    {
+        TreeNode n1 {1};
+        test(&n1); // 1
+    }
+    {
+        TreeNode n1 {1, new TreeNode {2}};
+        test(&n1); // 0
+    }
+
+    {
+        TreeNode n1 {
+            1,
+            new TreeNode {
+                2, NULL,
+                new TreeNode {4}
+            },
+            new TreeNode {2}
+        };
+        TreeNode n2 {
+            1,
+            new TreeNode {
+                2, NULL,
+                new TreeNode {4}
+            },
+            new TreeNode {
+                2, NULL,
+                new TreeNode {4}}
+        };
+        TreeNode n3 {
+            1,
+            new TreeNode {
+                2, NULL,
+                new TreeNode {4}
+            },
+            new TreeNode {
+                2, 
+                new TreeNode {4}}
+        };
+        test(&n1); // 0
+        test(&n2); // 0
+        test(&n3); // 1
+    }
+    return 0;    
+}
