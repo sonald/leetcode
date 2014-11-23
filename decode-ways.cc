@@ -73,8 +73,6 @@ public:
                 if (v <= 26) { dp[j] = dp[j+1] + dp[j+2]; }
                 else dp[j] = dp[j+1];
             }
-            dp[j+2] = dp[j+1];
-            dp[j+1] = dp[j];
         }
 
         return dp[0];
