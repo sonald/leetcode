@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
     test(NULL);
     {
         TreeNode root {
-            1, 
+            1,
             new TreeNode{
-                4, 
+                4,
                 new TreeNode{2}, new TreeNode{7}},
             new TreeNode{3}
         };
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
     {
         TreeNode root {
-            1, 
+            1,
             new TreeNode{4, new TreeNode{2, nullptr, new TreeNode{6}}, nullptr},
             new TreeNode{3, NULL, new TreeNode{5}}
         };
