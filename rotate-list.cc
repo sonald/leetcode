@@ -43,7 +43,7 @@ class Solution {
 public:
     ListNode *rotateRight(ListNode *head, int k) {
         if (!head) return head;
-        
+
         ListNode * fast = head, * slow = head;
         for (int i = 0; i < k; ++i) {
             if (slow->next) slow = slow->next;
