@@ -31,13 +31,6 @@ int minSubArrayLen(int s, int* nums, int n) {
     return m;
 }
 
-// contrive one with O(NlgN) complexity
-int minSubArrayLen2(int s, int* nums, int n) {
-    range_t r = {0, 0};
-    if (n <= 0) return 0;
-
-}
-
 int main(int argc, char const *argv[])
 {
     int a[] = {1,2,3,4,5};
