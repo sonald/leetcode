@@ -36,6 +36,42 @@ ostream& operator<<(ostream& os, const vector<T>& vs)
 
 // http://www.codeproject.com/Articles/13525/Fast-memory-efficient-Levenshtein-algorithm
 // the above has a simple improve by using two vectors
+// Mine is even better with space O(n)
+class Solution3 {
+public:
+   int min(int v1, int v2, int v3) {
+        return std::min(v1, std::min(v2, v3));
+    }
+
+    int minDistance(string s1, string s2) {
+        int n = s1.size(), m = s2.size();
+        if (!n || !m) return max(n, m);
+
+        vector<int> dp(n+1);
+        for (int i = 0; i < n+1; i++) dp[i] = i;
+        int pred = 0;
+        int curr = 0;
+
+        for (int i = 0; i < m; i++) {
+            dp[0] = i;
+            pred = i+1;
+            for (int j = 0; j < n; j++) {
+                if (s1[j] == s2[i]) {
+                    curr = dp[j];
+                } else {
+                    curr = min(dp[j], dp[j+1], pred) + 1;
+                }
+                dp[j] = pred;
+                pred = curr;
+
+            }
+            dp[n] = pred;
+        }
+
+        return curr;
+    }
+
+};
 
 class Solution2 {
 public:
@@ -58,17 +94,6 @@ public:
                     dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1; 
             }
         }
-
-        // for (int i = 1; i <= m; i++) dp[0][i] = s2[i-1];
-        // for (int i = 1; i <= n; i++) dp[i][0] = s1[i-1];  
-        // for (int i = 0; i <= n; i++) {
-        //     for (int j = 0; j <= m; j++) {
-        //         if (!i && !j) cout << setw(3) << 0 << " ";
-        //         else if (!i || !j) cout << setw(3) << (char)dp[i][j] << " ";
-        //         else cout << setw(3) << dp[i][j] << " ";
-        //     }
-        //     cout << endl;
-        // }            
 
         return dp[n][m];
     }
@@ -130,8 +155,9 @@ public:
 };
 
 void test(const string& s, const string& k) {
+    cout << Solution3().minDistance(s, k) << " ";    
     cout << Solution2().minDistance(s, k) << " ";    
-    cout << Solution().minDistance(s, k) << " ";
+    //cout << Solution().minDistance(s, k) << " ";
     cout << endl;
 }
 
