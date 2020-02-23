@@ -18,6 +18,13 @@ public:
     TrieNode() {
     }
 
+    ~TrieNode() {
+        for (int i = 0; i < 26; i++) 
+            if (children[i]) {
+                delete children[i];
+            }
+    }
+
 	TrieNode* children[26] {nullptr,};
     bool end {false}; 
 };
@@ -28,6 +35,7 @@ public:
     Trie() {
         root = new TrieNode();
     }
+    ~Trie() { delete root; }
 
     // Inserts a word into the trie.
     void insert(string word) {
